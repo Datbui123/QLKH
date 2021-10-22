@@ -1,0 +1,47 @@
+<?php
+	session_start(); 
+	include "includes/header.php";
+ ?>
+<?php require_once("includes/connection.php"); ?>
+<?php
+	//Ket noi database
+	mysql_connect("localhost", "root", "") or die("Connected fail!");
+	mysql_select_db("website") or die("Could not find database!");
+
+	$output="";
+	if(isset($_POST['btnSearch'])){
+		$search = $_POST['txtSearch'];
+		if($search != ""){
+			$query = mysql_query("SELECT * FROM posts WHERE title LIKE '%search%' OR content LIKE '%search%'")
+				or die("Could not search!");
+			$result = mysql_num_rows($query);
+			if($result == 0){
+				//Ket qua tim kiem = 0
+				$output = "<span style='color: red;'> No result with keyword '$search'</span>";
+			} else{
+				//ket qua tim kiem khac 0
+				$output = "<span style='color: #555;'> All result with keyword '$search': $result</span>"
+					. "<br><hr style='width: 200px; float: left;'><br>";
+				while ($row = mysql_fetch-array($query)){
+					//khai bao bien va gan gia tri, cac truong lay tu database
+					$id = $row['id'];
+					$title = $row['title'];
+					$content = $row['content'];
+
+					$output = "<div>$id<br>$title<br>$content<br><br></div>";
+				}
+			}
+	} else{
+			//Khong co ky tu nao duoc nhap tu ban phim
+			$output = "<span style='color: red;'> Please enter your keyword!</span>
+	
+?>
+
+<form method="POST" action="">
+<input type="text" name="search">
+<input type="submit" name="submit" value="Search">
+</form>
+
+			<?php
+				echo $output;
+			?>
